@@ -64,7 +64,7 @@
     "babel-core": "^6.26.3",
     "babel-jest": "^24.1.0",
     "babel-preset-minify": "^0.5.0",
-    "codecov": "^3.2.0",
+    "codecov": "^3.3.0",
     "dotenv": "^6.2.0",
     "es-check": "^5.0.0",
     "eslint": "^5.14.1",
