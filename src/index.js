@@ -1,4 +1,5 @@
 import axios from 'axios';
+import generateAccessToken from 'tinder-access-token-generator';
 
 /**
  * https://github.com/fbessez/Tinder
@@ -47,23 +48,33 @@ class TinderClient {
   }
 
   static createFromFacebookLogin({ emailAddress, password }) {
-    return axios({
-      method: 'GET',
-      url: 'https://b-graph.facebook.com/auth/login',
+    return axios.get('https://b-graph.facebook.com/auth/login', {
       params: {
-        password: password,
+        password,
         email: emailAddress,
         access_token: '350685531728|62f8ce9f74b12f84c123cc23437a4a32',
-        method: 'POST'
-      }
-    }).then(response => response.data)
-    .then(data => axios.create({
-      baseURL: 'https://api.gotinder.com',
-      headers: {
-        'X-Auth-Token': data.access_token,
-        ...SHARED_HEADERS,
+        method: 'POST',
       },
-    })).then(client => new TinderClient(client));
+    }).then(response => response.data)
+      .then(data => axios.create({
+        baseURL: 'https://api.gotinder.com',
+        headers: {
+          'X-Auth-Token': data.access_token,
+          ...SHARED_HEADERS,
+        },
+      })).then(client => new TinderClient(client))
+      .catch(() => generateAccessToken({
+        facebookEmailAddress: emailAddress,
+        facebookPassword: password,
+      }))
+      .then(accessToken => axios.create({
+        baseURL: 'https://api.gotinder.com',
+        headers: {
+          'X-Auth-Token': accessToken,
+          ...SHARED_HEADERS,
+        },
+      }))
+      .then(client => new TinderClient(client));
   }
 
   getProfile() {
