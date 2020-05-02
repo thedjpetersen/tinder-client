@@ -1,6 +1,8 @@
 import axios from 'axios';
 import {
   generateToken,
+  requestSMSCodes,
+  exchangeSMSCodes
 } from 'tinder-access-token-generator';
 
 import createHTTPClient from './createHTTPClient';
@@ -42,9 +44,32 @@ async function createClientFromFacebookLogin({ emailAddress, password }) {
   return createHTTPClient(apiToken);
 }
 
+async function createSMSRequest({ phoneNumber }) {
+  const { loginRequestCode } = await requestCodes({ phoneNumber });
+
+  return loginRequestCode;
+}
+
+async function createClientFromSMS({ phoneNumber, loginCode, smsCode }) {
+  const { apiToken, refreshToken } = await exchangeCodes({
+    phoneNumber,
+    loginCode,
+    smsCode,
+  });
+
+  return createHTTPClient(apiToken);
+}
+
+async function createClientFromAccessToken({apiToken}) {
+  return createHTTPClient(apiToken);
+}
+
 export {
   createClientFromFacebookAccessToken,
   createClientFromFacebookLogin,
+  createSMSRequest,
+  createClientFromSMS,
+  createClientFromAccessToken,
   GENDERS,
   GENDER_SEARCH_OPTIONS,
 };

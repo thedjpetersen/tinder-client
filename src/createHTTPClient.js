@@ -22,6 +22,8 @@ export default function createHTTPClient(accessToken) {
     },
   });
   return {
+    accessToken: accessToken,
+
     // General use method to access the underlying
     // axios client so that calls to specific endpoints
     // can be made
